@@ -6,17 +6,9 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 
 import controller.CSVController;
@@ -24,11 +16,9 @@ import controller.MovieController;
 import model.Movie;
 
 public class Lucene {
-	
-	private StandardAnalyzer analyzer = Singleton.getInstance().analyzer;
+
 	private Directory index = Singleton.getInstance().index;
 	private IndexWriterConfig config = Singleton.getInstance().config;
-	private IndexWriter w = Singleton.getInstance().w;
 	
 	public Lucene() throws IOException, ParseException {
 		createDocument();
@@ -42,6 +32,8 @@ public class Lucene {
 			csvcontroller.parseCSV("scraped_movies.csv");
 			moviecontroller.addMovie(csvcontroller.getColumns());
 			ArrayList<Movie> parsedMovies = moviecontroller.getMovies();
+			
+			IndexWriter w = new IndexWriter(index, config);
 			for (Movie movie : parsedMovies){ 
 				addDoc(w, movie);
 			}
@@ -66,7 +58,6 @@ public class Lucene {
 		  }
 		  for (String star : movie.getStars()){ 
 			  doc.add(new TextField("stars", star.trim(), Field.Store.YES));
-			//  System.out.println(star.trim());
 		  }
 		  w.addDocument(doc);
 		}

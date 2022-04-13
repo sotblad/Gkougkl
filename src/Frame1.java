@@ -4,8 +4,6 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -24,18 +22,9 @@ import org.eclipse.swt.events.SelectionEvent;
 public class Frame1 {
 
 	protected Shell shell;
-	private StandardAnalyzer analyzer;
-	private Directory index;
-	private IndexWriterConfig config;
-	private IndexWriter w;
+	private StandardAnalyzer analyzer = Singleton.getInstance().analyzer;
+	private Directory index = Singleton.getInstance().index;
 	
-	public Frame1() throws IOException, ParseException {
-		this.analyzer = Singleton.getInstance().analyzer;
-		this.index = Singleton.getInstance().index;
-		this.config = Singleton.getInstance().config;
-		this.w = Singleton.getInstance().w;
-	}
-
 	/**
 	 * Launch the application.
 	 * @param args

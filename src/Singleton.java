@@ -1,7 +1,6 @@
 import java.io.IOException;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
@@ -12,13 +11,11 @@ class Singleton {
     public StandardAnalyzer analyzer;
     public Directory index;
     public IndexWriterConfig config;
-    public IndexWriter w;
  
     private Singleton(StandardAnalyzer analyzer, Directory index) throws IOException, ParseException{
     	this.analyzer = analyzer;
 		this.index = index;
 		this.config = new IndexWriterConfig(analyzer);
-        this.w = new IndexWriter(index, config);
     }
  
     public static Singleton initInstance(StandardAnalyzer analyzer, Directory index) throws IOException, ParseException
