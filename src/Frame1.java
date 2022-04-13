@@ -173,7 +173,7 @@ public class Frame1 {
                             	try {
                 	    	        Query q;
                 	    	        if(!customSearch) {
-                	    	        	q = new QueryParser("title", analyzer).parse(querystr);
+                	    	        	q = new QueryParser("fulltext", analyzer).parse(querystr);
                 	    	        }else {
                 	    	        	List<String> fields = new ArrayList<String>();
                 	    	        	for (AbstractButton button : btngroup) {
