@@ -3,26 +3,26 @@ package model;
 public class Movie {
 	private String title;
 	private String releaseYear;
-	private String[] genre;
+	private String genre;
 	private String rating;
 	private String duration;
 	private String description;
-	private String[] directors;
-	private String[] stars;
+	private String directors;
+	private String stars;
 	
 	public Movie(String[] movieColumns) {
 		this.title = movieColumns[0];
 		this.releaseYear = movieColumns[1];
-		this.genre = movieColumns[2].replaceAll("[\"\\'\\[\\]]", "").split(",");
+		this.genre = movieColumns[2].replaceAll("[\"\\'\\[\\]]", "");
 		this.rating = movieColumns[3];
 		this.duration = movieColumns[4];
 		this.description = movieColumns[5];
-		this.directors = movieColumns[6].replaceAll("[\"\\'\\[\\]]", "").split(",");
-		this.stars = movieColumns[7].replaceAll("[\"\\'\\[\\]]", "").split(",");
+		this.directors = movieColumns[6].replaceAll("[\"\\'\\[\\]]", "");
+		this.stars = movieColumns[7].replaceAll("[\"\\'\\[\\]]", "");
 	}
 
-	public Movie(String title, String releaseYear, String[] genre, String rating, String duration, String description,
-			String[] directors, String[] stars) {
+	public Movie(String title, String releaseYear, String genre, String rating, String duration, String description,
+			String directors, String stars) {
 		super();
 		this.title = title;
 		this.releaseYear = releaseYear;
@@ -32,6 +32,10 @@ public class Movie {
 		this.description = description;
 		this.directors = directors;
 		this.stars = stars;
+	}
+
+	public Movie() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public String getTitle() {
@@ -50,11 +54,11 @@ public class Movie {
 		this.releaseYear = releaseYear;
 	}
 
-	public String[] getGenre() {
+	public String getGenre() {
 		return genre;
 	}
 
-	public void setGenre(String[] genre) {
+	public void setGenre(String genre) {
 		this.genre = genre;
 	}
 
@@ -82,22 +86,28 @@ public class Movie {
 		this.description = description;
 	}
 
-	public String[] getDirectors() {
+	public String getDirectors() {
 		return directors;
 	}
 
-	public void setDirectors(String[] directors) {
+	public void setDirectors(String directors) {
 		this.directors = directors;
 	}
 
-	public String[] getStars() {
+	public String getStars() {
 		return stars;
 	}
 
-	public void setStars(String[] stars) {
+	public void setStars(String stars) {
 		this.stars = stars;
 	}
 
+	public String getFulltext() {
+		return title + " " + releaseYear + " " + genre + " " + rating
+				+ " " + duration + " " + description + " " + directors + " "
+				+ stars;
+	}
+	
 	@Override
 	public String toString() {
 		return "Movie [title=" + title + ", releaseYear=" + releaseYear + ", genre=" + genre + ", rating=" + rating

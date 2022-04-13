@@ -47,18 +47,13 @@ public class Lucene {
 		  Document doc = new Document();
 		  doc.add(new TextField("title", movie.getTitle(), Field.Store.YES));
 		  doc.add(new TextField("year", movie.getReleaseYear(), Field.Store.YES));
-		  for (String genre : movie.getGenre()){ 
-			  doc.add(new TextField("genre", genre.trim(), Field.Store.YES));
-		  }
+		  doc.add(new TextField("genre", movie.getGenre(), Field.Store.YES));
 		  doc.add(new TextField("rating", movie.getRating(), Field.Store.YES));
 		  doc.add(new TextField("duration", movie.getDuration(), Field.Store.YES));
 		  doc.add(new TextField("description", movie.getDescription(), Field.Store.YES));
-		  for (String director : movie.getDirectors()){ 
-			  doc.add(new TextField("directors", director.trim(), Field.Store.YES));
-		  }
-		  for (String star : movie.getStars()){ 
-			  doc.add(new TextField("stars", star.trim(), Field.Store.YES));
-		  }
+		  doc.add(new TextField("directors", movie.getDirectors(), Field.Store.YES));
+		  doc.add(new TextField("stars", movie.getStars(), Field.Store.YES));
+		  doc.add(new TextField("fulltext", movie.getFulltext(), Field.Store.YES));
 		  w.addDocument(doc);
 		}
 }
