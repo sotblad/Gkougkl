@@ -22,7 +22,7 @@ class Singleton {
     {
         if (single_instance == null) {
             single_instance = new Singleton(analyzer, index);
-            Lucene lucene = new Lucene();
+            new Lucene();
         }
  
         return single_instance;

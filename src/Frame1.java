@@ -1,4 +1,19 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
+
+import javax.swing.DefaultListModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -18,89 +33,126 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import java.awt.FlowLayout;
+import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.table.DefaultTableModel;
+
+import java.awt.Font;
+import javax.swing.JTable;
+import javax.swing.JMenuBar;
 
 public class Frame1 {
 
 	protected Shell shell;
+	static JFrame frame;
+    static JPanel panel;
+	public static JTextField input;
 	private StandardAnalyzer analyzer = Singleton.getInstance().analyzer;
 	private Directory index = Singleton.getInstance().index;
+	private static JTextField searchField;
+	private static JTable table;
+	private static JScrollPane scroll_table;
 	
-	/**
-	 * Launch the application.
-	 * @param args
-	 * @throws IOException 
-	 * @throws ParseException 
-	 */
+
 	public static void main(String[] args) throws IOException, ParseException {
-		StandardAnalyzer analyzer = new StandardAnalyzer();
-        Directory index = new ByteBuffersDirectory();
+		final StandardAnalyzer analyzer = new StandardAnalyzer();
+        final Directory index = new ByteBuffersDirectory();
         Singleton.initInstance(analyzer, index);
         
-		try {
-			Frame1 window = new Frame1();
-			
-			window.open();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        final JFrame frame = new JFrame();
+        
+        JPanel panel = new JPanel();
 
-	/**
-	 * Open the window.
-	 * @throws IOException 
-	 * @throws ParseException 
-	 */
-	public void open() throws ParseException, IOException {
-		Display display = Display.getDefault();
-		createContents();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-	}
+        frame.getContentPane().add(panel);
+        
+        final DefaultTableModel model_table = new DefaultTableModel(); 
+        JTable table = new JTable(model_table); 
+        model_table.addColumn("Title");
+        model_table.addColumn("Year"); 
+        model_table.addColumn("Genre");
+        model_table.addColumn("Rating"); 
+        model_table.addColumn("Duration");
 
-	/**
-	 * Create contents of the window.
-	 * @throws ParseException 
-	 * @throws IOException 
-	 */
-	protected void createContents() throws ParseException, IOException {
-		shell = new Shell();
-		shell.setSize(450, 300);
-		shell.setText("SWT Application");
-		
-//		String querystr = "Taylor";
-//
-//        // the "title" arg specifies the default field to use
-//        // when no field is explicitly specified in the query.
-//        Query q = new QueryParser("title", analyzer).parse(querystr);
-//
-//        // 3. search
-//        int hitsPerPage = 10;
-//        IndexReader reader = DirectoryReader.open(index);
-//        IndexSearcher searcher = new IndexSearcher(reader);
-//        TopDocs docs = searcher.search(q, hitsPerPage);
-//        ScoreDoc[] hits = docs.scoreDocs;
-//
-//        // 4. display results
-//        System.out.println("Found " + hits.length + " hits.");
-//        for(int i=0;i<hits.length;++i) {
-//            int docId = hits[i].doc;
-//            Document d = searcher.doc(docId);
-//            System.out.println((i + 1) + ". " + d.get("stars") + "\t aaaaaaa " + d.get("title"));
-//        }
-		Button btnNewButton = new Button(shell, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
 
-			}
-		});
-		btnNewButton.setBounds(31, 39, 75, 25);
-		btnNewButton.setText("New Button");
-
+        searchField = new JTextField();
+        
+        searchField.setColumns(10);
+                        JButton button1 = new JButton("Search");
+                        button1.setActionCommand("Search");
+                        button1.addActionListener(new ActionListener() {
+                            
+                            public void actionPerformed(ActionEvent arg0) {
+                            	String querystr = searchField.getText();
+                            	model_table.setRowCount(0);
+                            	try {
+                	    	        Query q = new QueryParser("title", analyzer).parse(querystr);
+                	    	
+                	    	        // 3. search
+                	    	        
+                	    	        IndexReader reader = DirectoryReader.open(index);
+                	    	        IndexSearcher searcher = new IndexSearcher(reader);
+                	    	        TopDocs docs = searcher.search(q, reader.numDocs());
+                	    	        ScoreDoc[] hits = docs.scoreDocs;
+                	    	
+                	    	        // 4. display results
+                	    	        for(int i=0;i<hits.length;++i) {
+                	    	            int docId = hits[i].doc;
+                	    	            Document d = searcher.doc(docId);
+                	    	            model_table.addRow(new Object[]{d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration")});
+                	    	        }
+                            	} catch (Exception ParseException) {}
+                            }
+                        });
+                        
+                        JLabel lblNewLabel = new JLabel("gkougkl");
+                        lblNewLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 25));
+                        
+                        
+                        
+                        scroll_table = new JScrollPane(table);
+                        
+                        
+                        GroupLayout gl_panel = new GroupLayout(panel);
+                        gl_panel.setHorizontalGroup(
+                        	gl_panel.createParallelGroup(Alignment.TRAILING)
+                        		.addGroup(gl_panel.createSequentialGroup()
+                        			.addContainerGap(241, Short.MAX_VALUE)
+                        			.addComponent(searchField, GroupLayout.PREFERRED_SIZE, 478, GroupLayout.PREFERRED_SIZE)
+                        			.addGap(28)
+                        			.addComponent(button1)
+                        			.addGap(196))
+                        		.addGroup(gl_panel.createSequentialGroup()
+                        			.addGap(406)
+                        			.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+                        			.addContainerGap(507, Short.MAX_VALUE))
+                        		.addGroup(gl_panel.createSequentialGroup()
+                        			.addContainerGap(194, Short.MAX_VALUE)
+                        			.addComponent(scroll_table, GroupLayout.PREFERRED_SIZE, 627, GroupLayout.PREFERRED_SIZE)
+                        			.addGap(187))
+                        );
+                        gl_panel.setVerticalGroup(
+                        	gl_panel.createParallelGroup(Alignment.LEADING)
+                        		.addGroup(gl_panel.createSequentialGroup()
+                        			.addContainerGap()
+                        			.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
+                        			.addGap(40)
+                        			.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+                        				.addComponent(searchField, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+                        				.addComponent(button1))
+                        			.addGap(79)
+                        			.addComponent(scroll_table, GroupLayout.PREFERRED_SIZE, 274, GroupLayout.PREFERRED_SIZE)
+                        			.addContainerGap(236, Short.MAX_VALUE))
+                        );
+                        panel.setLayout(gl_panel);
+                        table.setDefaultEditor(Object.class, null);
+        frame.setVisible(true);
+        frame.setPreferredSize(new Dimension(1024, 768));
+        frame.pack();
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
+        
 	}
 }

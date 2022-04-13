@@ -39,10 +39,10 @@ public class CSVParser {
 					System.out.println(cnt + " " + columns.length);
 				}
 				
-				if (!isEncoded(columns[0])) { // don't add greek named movies
+				//if (!isEncoded(columns[0])) { // don't add greek named movies
 					this.columns.add(columns);
 					cnt+=1;
-				}
+			//	}
 				
 				line = br.readLine();
 				
