@@ -233,6 +233,10 @@ public class Frame1 {
                         button1.addActionListener(new ActionListener() {
                             
                             public void actionPerformed(ActionEvent arg0) {
+                            	nextRowsCount = 0;
+                            	rowsCount = 0;
+                            	nextButton.setEnabled(false);
+                            	previousButton.setEnabled(false);
                             	String querystr = searchField.getSelectedItem().toString();
                             	List<Lookup.LookupResult> lookup = null;
                             	if(!historyService.getHistory().contains(querystr)) {
@@ -280,6 +284,8 @@ public class Frame1 {
                 	    	        // 4. display results
                 	    	        if(hits.length <= 10) {
                 	    	        	nextRowsCount = hits.length;
+                	    	        	nextButton.setEnabled(false);
+                	    	        	
                 	    	        }else {
                 	    	        	nextRowsCount = 10;
                 	    	        	nextButton.setEnabled(true);
@@ -309,6 +315,7 @@ public class Frame1 {
                         			nextRowsCount = hits.length;
                         			
                         			nextButton.setEnabled(false);
+                        			previousButton.setEnabled(true);
                         		}
 
                         		for(int i=rowsCount;i<nextRowsCount;++i) {
