@@ -138,14 +138,24 @@ public class Frame1 {
         
         final DefaultTableModel model_table = new DefaultTableModel(); 
         JTable table = new JTable(model_table); 
+        
         model_table.addColumn("Title");
         model_table.addColumn("Year"); 
         model_table.addColumn("Genre");
         model_table.addColumn("Rating"); 
         model_table.addColumn("Duration");
-        model_table.addColumn("Description");
+        
         model_table.addColumn("Directors");
         model_table.addColumn("Stars");
+        model_table.addColumn("Description");
+        table.getColumnModel().getColumn(0).setCellRenderer(new WordWrapCellRenderer());
+        table.getColumnModel().getColumn(1).setCellRenderer(new WordWrapCellRenderer());
+        table.getColumnModel().getColumn(2).setCellRenderer(new WordWrapCellRenderer());
+        table.getColumnModel().getColumn(3).setCellRenderer(new WordWrapCellRenderer());
+        table.getColumnModel().getColumn(4).setCellRenderer(new WordWrapCellRenderer());
+        table.getColumnModel().getColumn(5).setCellRenderer(new WordWrapCellRenderer());
+        table.getColumnModel().getColumn(6).setCellRenderer(new WordWrapCellRenderer());
+        table.getColumnModel().getColumn(7).setCellRenderer(new WordWrapCellRenderer());
                         JButton button1 = new JButton("Search");
                         button1.setActionCommand("Search");
                         
@@ -280,7 +290,9 @@ public class Frame1 {
                 	    	        searcher = new IndexSearcher(reader);
                 	    	        TopDocs docs = searcher.search(q, reader.numDocs());
                 	    	        hits = docs.scoreDocs;
-                	    	
+                	    	        nextButton.setEnabled(false);
+                                	previousButton.setEnabled(false);
+                                	
                 	    	        // 4. display results
                 	    	        if(hits.length <= 10) {
                 	    	        	nextRowsCount = hits.length;
@@ -294,7 +306,7 @@ public class Frame1 {
                 	    	        	for(int i=0;i<nextRowsCount;++i) {
                     	    	            int docId = hits[i].doc;
                     	    	            Document d = searcher.doc(docId);
-                    	    	            model_table.addRow(new Object[]{d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("description"), d.get("directors"), d.get("stars")});
+                    	    	            model_table.addRow(new Object[]{d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("directors"), d.get("stars"), d.get("description")});
                     	    	        }
                 	    	        
                             	} catch (Exception ParseException) {}
@@ -326,7 +338,7 @@ public class Frame1 {
 									} catch (IOException e1) {
 										e1.printStackTrace();
 									}
-            	    	            model_table.addRow(new Object[]{d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("description"), d.get("directors"), d.get("stars")});
+            	    	            model_table.addRow(new Object[]{d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("directors"), d.get("stars"), d.get("description")});
             	    	        }
                         	}
                         });
@@ -382,59 +394,59 @@ public class Frame1 {
                         gl_panel.setHorizontalGroup(
                         	gl_panel.createParallelGroup(Alignment.LEADING)
                         		.addGroup(gl_panel.createSequentialGroup()
-                        			.addGap(106)
-                        			.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+                        			.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
                         				.addGroup(gl_panel.createSequentialGroup()
+                        					.addContainerGap()
+                        					.addComponent(scroll_table))
+                        				.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
+                        					.addGap(849)
                         					.addComponent(previousButton)
                         					.addPreferredGap(ComponentPlacement.RELATED)
                         					.addComponent(nextButton))
-                        				.addComponent(scroll_table, GroupLayout.PREFERRED_SIZE, 877, GroupLayout.PREFERRED_SIZE))
-                        			.addContainerGap(25, Short.MAX_VALUE))
-                        		.addGroup(gl_panel.createSequentialGroup()
-                        			.addGap(25)
-                        			.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                        				.addComponent(btnNewButton)
-                        				.addComponent(scroll_list, GroupLayout.PREFERRED_SIZE, 152, GroupLayout.PREFERRED_SIZE))
-                        			.addPreferredGap(ComponentPlacement.RELATED)
-                        			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                        				.addGroup(gl_panel.createSequentialGroup()
-                        					.addGap(264)
-                        					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
-                        					.addContainerGap(472, Short.MAX_VALUE))
-                        				.addGroup(gl_panel.createSequentialGroup()
+                        				.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
+                        					.addGap(25)
                         					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                        						.addGroup(gl_panel.createSequentialGroup()
-                        							.addComponent(titleRadio)
-                        							.addGap(0)
-                        							.addComponent(yearRadio)
-                        							.addPreferredGap(ComponentPlacement.RELATED)
-                        							.addComponent(genreRadio)
-                        							.addPreferredGap(ComponentPlacement.RELATED)
-                        							.addComponent(ratingRadio)
-                        							.addPreferredGap(ComponentPlacement.RELATED)
-                        							.addComponent(durationRadio)
-                        							.addPreferredGap(ComponentPlacement.RELATED)
-                        							.addComponent(descriptionRadio)
-                        							.addPreferredGap(ComponentPlacement.RELATED)
-                        							.addComponent(directorsRadio)
-                        							.addPreferredGap(ComponentPlacement.RELATED)
-                        							.addComponent(starsRadio)
-                        							.addGap(26))
-                        						.addGroup(gl_panel.createSequentialGroup()
-                        							.addComponent(searchField, GroupLayout.PREFERRED_SIZE, 478, GroupLayout.PREFERRED_SIZE)
-                        							.addGap(18)))
+                        						.addComponent(btnNewButton)
+                        						.addComponent(scroll_list, GroupLayout.PREFERRED_SIZE, 152, GroupLayout.PREFERRED_SIZE))
+                        					.addPreferredGap(ComponentPlacement.RELATED)
                         					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                        						.addComponent(chckbxNewCheckBox)
                         						.addGroup(gl_panel.createSequentialGroup()
-                        							.addComponent(button1)
+                        							.addGap(264)
+                        							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE))
+                        						.addGroup(gl_panel.createSequentialGroup()
+                        							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+                        								.addGroup(gl_panel.createSequentialGroup()
+                        									.addComponent(titleRadio)
+                        									.addGap(0)
+                        									.addComponent(yearRadio)
+                        									.addPreferredGap(ComponentPlacement.RELATED)
+                        									.addComponent(genreRadio)
+                        									.addPreferredGap(ComponentPlacement.RELATED)
+                        									.addComponent(ratingRadio)
+                        									.addPreferredGap(ComponentPlacement.RELATED)
+                        									.addComponent(durationRadio)
+                        									.addPreferredGap(ComponentPlacement.RELATED)
+                        									.addComponent(descriptionRadio)
+                        									.addPreferredGap(ComponentPlacement.RELATED)
+                        									.addComponent(directorsRadio)
+                        									.addPreferredGap(ComponentPlacement.RELATED)
+                        									.addComponent(starsRadio)
+                        									.addGap(26))
+                        								.addGroup(gl_panel.createSequentialGroup()
+                        									.addComponent(searchField, GroupLayout.PREFERRED_SIZE, 478, GroupLayout.PREFERRED_SIZE)
+                        									.addGap(18)))
                         							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+                        								.addComponent(chckbxNewCheckBox)
                         								.addGroup(gl_panel.createSequentialGroup()
-                        									.addPreferredGap(ComponentPlacement.UNRELATED)
-                        									.addComponent(slider, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE))
-                        								.addGroup(gl_panel.createSequentialGroup()
-                        									.addGap(29)
-                        									.addComponent(lblNewLabel_2)))))
-                        					.addGap(96))))
+                        									.addComponent(button1)
+                        									.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+                        										.addGroup(gl_panel.createSequentialGroup()
+                        											.addPreferredGap(ComponentPlacement.UNRELATED)
+                        											.addComponent(slider, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE))
+                        										.addGroup(gl_panel.createSequentialGroup()
+                        											.addGap(29)
+                        											.addComponent(lblNewLabel_2)))))))))
+                        			.addGap(25))
                         );
                         gl_panel.setVerticalGroup(
                         	gl_panel.createParallelGroup(Alignment.LEADING)
@@ -470,15 +482,18 @@ public class Frame1 {
                         					.addPreferredGap(ComponentPlacement.UNRELATED)
                         					.addComponent(btnNewButton)
                         					.addGap(35)))
-                        			.addComponent(scroll_table, GroupLayout.PREFERRED_SIZE, 184, GroupLayout.PREFERRED_SIZE)
-                        			.addGap(18)
+                        			.addPreferredGap(ComponentPlacement.RELATED)
+                        			.addComponent(scroll_table, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        			.addPreferredGap(ComponentPlacement.RELATED)
                         			.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
                         				.addComponent(nextButton)
                         				.addComponent(previousButton))
                         			.addContainerGap(249, Short.MAX_VALUE))
                         );
                         panel.setLayout(gl_panel);
+                        table.setRowHeight(155);
                         table.setAutoCreateRowSorter(true);
+                        
                         table.setDefaultEditor(Object.class, null);
                         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
