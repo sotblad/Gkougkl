@@ -35,7 +35,7 @@ public class CSVParser {
 			while (line != null) {
 			
 				String[] columns = line.split("\\|");
-				if(columns.length != 8) {
+				if(columns.length != 9) {
 					System.out.println(cnt + " " + columns.length);
 				}
 				

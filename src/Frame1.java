@@ -10,12 +10,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -69,12 +72,16 @@ import java.awt.FlowLayout;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.JTable;
 import javax.swing.JMenuBar;
 import javax.swing.JComboBox;
@@ -136,9 +143,13 @@ public class Frame1 {
 
         frame.getContentPane().add(panel, BorderLayout.NORTH);
         
-        final DefaultTableModel model_table = new DefaultTableModel(); 
-        JTable table = new JTable(model_table); 
-        
+        final DefaultTableModel model_table = new DefaultTableModel(){
+            public Class getColumnClass(int column) {
+                return getValueAt(0, column).getClass();
+            }
+        }; 
+        JTable table = new JTable(model_table);
+        model_table.addColumn("Image");
         model_table.addColumn("Title");
         model_table.addColumn("Year"); 
         model_table.addColumn("Genre");
@@ -148,7 +159,6 @@ public class Frame1 {
         model_table.addColumn("Directors");
         model_table.addColumn("Stars");
         model_table.addColumn("Description");
-        table.getColumnModel().getColumn(0).setCellRenderer(new WordWrapCellRenderer());
         table.getColumnModel().getColumn(1).setCellRenderer(new WordWrapCellRenderer());
         table.getColumnModel().getColumn(2).setCellRenderer(new WordWrapCellRenderer());
         table.getColumnModel().getColumn(3).setCellRenderer(new WordWrapCellRenderer());
@@ -156,6 +166,7 @@ public class Frame1 {
         table.getColumnModel().getColumn(5).setCellRenderer(new WordWrapCellRenderer());
         table.getColumnModel().getColumn(6).setCellRenderer(new WordWrapCellRenderer());
         table.getColumnModel().getColumn(7).setCellRenderer(new WordWrapCellRenderer());
+        table.getColumnModel().getColumn(8).setCellRenderer(new WordWrapCellRenderer());
                         JButton button1 = new JButton("Search");
                         button1.setActionCommand("Search");
                         
@@ -163,12 +174,12 @@ public class Frame1 {
                         lblNewLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 25));
                         
                         
-                        
                         scroll_table = new JScrollPane(table);
                         final JSlider slider = new JSlider();
                         final List<JCheckBox> btngroup = new ArrayList<>();
                         
-              
+                        final JCheckBox loadImages = new JCheckBox("Load images");
+                        loadImages.setSelected(true);
                         
                         JCheckBox titleRadio = new JCheckBox("Title");
                         titleRadio.setVisible(false);
@@ -201,6 +212,7 @@ public class Frame1 {
                         btngroup.add(descriptionRadio);
                         btngroup.add(directorsRadio);
                         btngroup.add(starsRadio);
+                       
                         
                         final DefaultListModel historyList = new DefaultListModel();
                         final JList list = new JList(historyList);
@@ -306,7 +318,11 @@ public class Frame1 {
                 	    	        	for(int i=0;i<nextRowsCount;++i) {
                     	    	            int docId = hits[i].doc;
                     	    	            Document d = searcher.doc(docId);
-                    	    	            model_table.addRow(new Object[]{d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("directors"), d.get("stars"), d.get("description")});
+                    	    	            ImageIcon image = new ImageIcon("emptyMovie.png");
+    										if(loadImages.isSelected()) {
+    											image = new ImageIcon(new URL(d.get("imageUrl")));
+    										}
+    										model_table.addRow(new Object[]{image, d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("directors"), d.get("stars"), d.get("description")});
                     	    	        }
                 	    	        
                             	} catch (Exception ParseException) {}
@@ -338,7 +354,15 @@ public class Frame1 {
 									} catch (IOException e1) {
 										e1.printStackTrace();
 									}
-            	    	            model_table.addRow(new Object[]{d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("directors"), d.get("stars"), d.get("description")});
+									try {
+										ImageIcon image = new ImageIcon("emptyMovie.png");
+										if(loadImages.isSelected()) {
+											image = new ImageIcon(new URL(d.get("imageUrl")));
+										}
+										model_table.addRow(new Object[]{image, d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("directors"), d.get("stars"), d.get("description")});
+									} catch (MalformedURLException e1) {
+										e1.printStackTrace();
+									}
             	    	        }
                         	}
                         });
@@ -367,7 +391,15 @@ public class Frame1 {
 									} catch (IOException e1) {
 										e1.printStackTrace();
 									}
-            	    	            model_table.addRow(new Object[]{d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("description"), d.get("directors"), d.get("stars")});
+									ImageIcon image = new ImageIcon("emptyMovie.png");
+									if(loadImages.isSelected()) {
+										try {
+											image = new ImageIcon(new URL(d.get("imageUrl")));
+										} catch (MalformedURLException e1) {
+											e1.printStackTrace();
+										}
+									}
+            	    	            model_table.addRow(new Object[]{image, d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("description"), d.get("directors"), d.get("stars")});
             	    	        }
                         	}
                         });
@@ -390,20 +422,19 @@ public class Frame1 {
                         
                         
                         
+                        
+                        
                         GroupLayout gl_panel = new GroupLayout(panel);
                         gl_panel.setHorizontalGroup(
                         	gl_panel.createParallelGroup(Alignment.LEADING)
                         		.addGroup(gl_panel.createSequentialGroup()
-                        			.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
+                        			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
                         				.addGroup(gl_panel.createSequentialGroup()
-                        					.addContainerGap()
-                        					.addComponent(scroll_table))
-                        				.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
                         					.addGap(849)
                         					.addComponent(previousButton)
                         					.addPreferredGap(ComponentPlacement.RELATED)
                         					.addComponent(nextButton))
-                        				.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
+                        				.addGroup(gl_panel.createSequentialGroup()
                         					.addGap(25)
                         					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
                         						.addComponent(btnNewButton)
@@ -445,7 +476,12 @@ public class Frame1 {
                         											.addComponent(slider, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE))
                         										.addGroup(gl_panel.createSequentialGroup()
                         											.addGap(29)
-                        											.addComponent(lblNewLabel_2)))))))))
+                        											.addComponent(lblNewLabel_2))))))))
+                        				.addGroup(gl_panel.createSequentialGroup()
+                        					.addContainerGap()
+                        					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+                        						.addComponent(scroll_table, GroupLayout.DEFAULT_SIZE, 973, Short.MAX_VALUE)
+                        						.addComponent(loadImages))))
                         			.addGap(25))
                         );
                         gl_panel.setVerticalGroup(
@@ -481,17 +517,18 @@ public class Frame1 {
                         					.addComponent(scroll_list, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
                         					.addPreferredGap(ComponentPlacement.UNRELATED)
                         					.addComponent(btnNewButton)
-                        					.addGap(35)))
+                        					.addGap(10)
+                        					.addComponent(loadImages)
+                        					.addGap(2)))
                         			.addPreferredGap(ComponentPlacement.RELATED)
-                        			.addComponent(scroll_table, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        			.addPreferredGap(ComponentPlacement.RELATED)
+                        			.addComponent(scroll_table, GroupLayout.PREFERRED_SIZE, 364, GroupLayout.PREFERRED_SIZE)
+                        			.addGap(44)
                         			.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
                         				.addComponent(nextButton)
                         				.addComponent(previousButton))
                         			.addContainerGap(249, Short.MAX_VALUE))
                         );
                         panel.setLayout(gl_panel);
-                        table.setRowHeight(155);
                         table.setAutoCreateRowSorter(true);
                         
                         table.setDefaultEditor(Object.class, null);

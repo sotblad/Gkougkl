@@ -1,6 +1,7 @@
 package model;
 
 public class Movie {
+	private String imageUrl;
 	private String title;
 	private String releaseYear;
 	private String genre;
@@ -11,19 +12,21 @@ public class Movie {
 	private String stars;
 	
 	public Movie(String[] movieColumns) {
-		this.title = movieColumns[0];
-		this.releaseYear = movieColumns[1];
-		this.genre = movieColumns[2].replaceAll("[\"\\'\\[\\]]", "");
-		this.rating = movieColumns[3];
-		this.duration = movieColumns[4];
-		this.description = movieColumns[5];
-		this.directors = movieColumns[6].replaceAll("[\"\\'\\[\\]]", "");
-		this.stars = movieColumns[7].replaceAll("[\"\\'\\[\\]]", "");
+		this.imageUrl = movieColumns[0];
+		this.title = movieColumns[1];
+		this.releaseYear = movieColumns[2];
+		this.genre = movieColumns[3].replaceAll("[\"\\'\\[\\]]", "");
+		this.rating = movieColumns[4];
+		this.duration = movieColumns[5];
+		this.description = movieColumns[6];
+		this.directors = movieColumns[7].replaceAll("[\"\\'\\[\\]]", "");
+		this.stars = movieColumns[8].replaceAll("[\"\\'\\[\\]]", "");
 	}
 
-	public Movie(String title, String releaseYear, String genre, String rating, String duration, String description,
+	public Movie(String imageUrl, String title, String releaseYear, String genre, String rating, String duration, String description,
 			String directors, String stars) {
 		super();
+		this.imageUrl = imageUrl;
 		this.title = title;
 		this.releaseYear = releaseYear;
 		this.genre = genre;
@@ -36,6 +39,14 @@ public class Movie {
 
 	public Movie() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public String getTitle() {

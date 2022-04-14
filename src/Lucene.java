@@ -45,6 +45,7 @@ public class Lucene {
 	
 	private static void addDoc(IndexWriter w, Movie movie) throws IOException {
 		  Document doc = new Document();
+		  doc.add(new StringField("imageUrl", movie.getImageUrl(), Field.Store.YES));
 		  doc.add(new TextField("title", movie.getTitle(), Field.Store.YES));
 		  doc.add(new TextField("year", movie.getReleaseYear(), Field.Store.YES));
 		  doc.add(new TextField("genre", movie.getGenre(), Field.Store.YES));
