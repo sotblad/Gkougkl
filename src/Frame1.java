@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.CharBuffer;
@@ -24,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -35,6 +37,13 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.Fragmenter;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.search.spell.HighFrequencyDictionary;
 import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.search.suggest.analyzing.AnalyzingSuggester;
@@ -288,6 +297,13 @@ public class Frame1 {
                 	    	        	nextRowsCount = 10;
                 	    	        	nextButton.setEnabled(true);
                 	    	        }
+                	    	        Formatter formatter = new SimpleHTMLFormatter();
+                	    	        QueryScorer queryScorer = new QueryScorer(q);
+                	    	        
+                	    	        Fragmenter fragmenter = new SimpleSpanFragmenter(queryScorer);
+                	    	        Highlighter highlighter = new Highlighter(queryScorer);
+                	    	        highlighter.setTextFragmenter(fragmenter);
+                	    	        
                 	    	        
                 	    	        	for(int i=0;i<nextRowsCount;++i) {
                     	    	            int docId = hits[i].doc;
@@ -296,6 +312,8 @@ public class Frame1 {
     										if(loadImages.isSelected()) {
     											image = new ImageIcon(new URL(d.get("imageUrl")));
     										}
+    							//			TokenStream tokenStream = analyzer.tokenStream("text", new StringReader(d.get("fulltext")));
+    							//			System.out.println(highlighter.getBestFragment(tokenStream, d.get("fulltext")));
     										model_table.addRow(new Object[]{image, d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("directors"), d.get("stars"), d.get("description")});
                     	    	        }
                 	    	        
