@@ -5,40 +5,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -47,32 +36,15 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.spell.HighFrequencyDictionary;
-import org.apache.lucene.search.spell.LuceneDictionary;
-import org.apache.lucene.search.spell.SpellChecker;
-import org.apache.lucene.search.suggest.InputIterator;
 import org.apache.lucene.search.suggest.Lookup;
-import org.apache.lucene.search.suggest.analyzing.AnalyzingInfixSuggester;
 import org.apache.lucene.search.suggest.analyzing.AnalyzingSuggester;
-import org.apache.lucene.search.suggest.analyzing.FuzzySuggester;
-import org.apache.lucene.search.suggest.tst.TSTLookup;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.Version;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import model.Movie;
 import services.HistoryService;
 
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import java.awt.FlowLayout;
-import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.ListSelectionEvent;
@@ -80,14 +52,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.Font;
-import java.awt.Image;
 
 import javax.swing.JTable;
-import javax.swing.JMenuBar;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
 public class Frame1 {
@@ -111,7 +79,7 @@ public class Frame1 {
 	public static void buildAnalyzingSuggester(Directory autocompleteDirectory, Analyzer autocompleteAnalyzer)
 	        throws IOException {
 	    DirectoryReader sourceReader = DirectoryReader.open(autocompleteDirectory);
-	    HighFrequencyDictionary dict = new HighFrequencyDictionary(sourceReader, "fulltext", 0);
+	    HighFrequencyDictionary dict = new HighFrequencyDictionary(sourceReader, "imageUrl", 0);
 	    analyzingSuggester = new AnalyzingSuggester(autocompleteDirectory, "suggest",
 	            autocompleteAnalyzer);
 	    analyzingSuggester.build(dict);
@@ -149,6 +117,8 @@ public class Frame1 {
             }
         }; 
         JTable table = new JTable(model_table);
+        table.setAlignmentY(Component.TOP_ALIGNMENT);
+        table.setAlignmentX(Component.LEFT_ALIGNMENT);
         model_table.addColumn("Image");
         model_table.addColumn("Title");
         model_table.addColumn("Year"); 
@@ -232,6 +202,7 @@ public class Frame1 {
                         nextButton.setEnabled(false);
                         previousButton.setEnabled(false);
                         final JComboBox searchField = new JComboBox();
+                        
                         searchField.setEditable(true);
                         
                         final JCheckBox chckbxNewCheckBox = new JCheckBox("Custom Field Search");
@@ -255,11 +226,14 @@ public class Frame1 {
                         button1.addActionListener(new ActionListener() {
                             
                             public void actionPerformed(ActionEvent arg0) {
+                            	
                             	nextRowsCount = 0;
                             	rowsCount = 0;
                             	nextButton.setEnabled(false);
                             	previousButton.setEnabled(false);
                             	String querystr = searchField.getSelectedItem().toString();
+                            	
+                            	WordWrapCellRenderer.setVariable(querystr);
                             	List<Lookup.LookupResult> lookup = null;
                             	if(!historyService.getHistory().contains(querystr)) {
 	                            	historyService.addToHistory(querystr);
@@ -426,25 +400,17 @@ public class Frame1 {
                         
                         GroupLayout gl_panel = new GroupLayout(panel);
                         gl_panel.setHorizontalGroup(
-                        	gl_panel.createParallelGroup(Alignment.LEADING)
+                        	gl_panel.createParallelGroup(Alignment.TRAILING)
                         		.addGroup(gl_panel.createSequentialGroup()
                         			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
-                        				.addGroup(gl_panel.createSequentialGroup()
-                        					.addGap(849)
-                        					.addComponent(previousButton)
-                        					.addPreferredGap(ComponentPlacement.RELATED)
-                        					.addComponent(nextButton))
                         				.addGroup(gl_panel.createSequentialGroup()
                         					.addGap(25)
                         					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
                         						.addComponent(btnNewButton)
                         						.addComponent(scroll_list, GroupLayout.PREFERRED_SIZE, 152, GroupLayout.PREFERRED_SIZE))
-                        					.addPreferredGap(ComponentPlacement.RELATED)
                         					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
                         						.addGroup(gl_panel.createSequentialGroup()
-                        							.addGap(264)
-                        							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE))
-                        						.addGroup(gl_panel.createSequentialGroup()
+                        							.addPreferredGap(ComponentPlacement.UNRELATED)
                         							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
                         								.addGroup(gl_panel.createSequentialGroup()
                         									.addComponent(titleRadio)
@@ -470,38 +436,55 @@ public class Frame1 {
                         								.addComponent(chckbxNewCheckBox)
                         								.addGroup(gl_panel.createSequentialGroup()
                         									.addComponent(button1)
+                        									.addGap(10)
                         									.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                        										.addGroup(gl_panel.createSequentialGroup()
-                        											.addPreferredGap(ComponentPlacement.UNRELATED)
-                        											.addComponent(slider, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE))
+                        										.addComponent(slider, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE)
                         										.addGroup(gl_panel.createSequentialGroup()
                         											.addGap(29)
-                        											.addComponent(lblNewLabel_2))))))))
+                        											.addComponent(lblNewLabel_2))))))
+                        						.addGroup(gl_panel.createSequentialGroup()
+                        							.addGap(184)
+                        							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)))
+                        					.addGap(175))
                         				.addGroup(gl_panel.createSequentialGroup()
                         					.addContainerGap()
-                        					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                        						.addComponent(scroll_table, GroupLayout.DEFAULT_SIZE, 973, Short.MAX_VALUE)
-                        						.addComponent(loadImages))))
+                        					.addComponent(loadImages)))
                         			.addGap(25))
+                        		.addGroup(gl_panel.createSequentialGroup()
+                        			.addContainerGap()
+                        			.addComponent(scroll_table, GroupLayout.DEFAULT_SIZE, 1244, Short.MAX_VALUE)
+                        			.addContainerGap())
+                        		.addGroup(gl_panel.createSequentialGroup()
+                        			.addContainerGap(1120, Short.MAX_VALUE)
+                        			.addComponent(previousButton)
+                        			.addPreferredGap(ComponentPlacement.RELATED)
+                        			.addComponent(nextButton)
+                        			.addContainerGap())
                         );
                         gl_panel.setVerticalGroup(
                         	gl_panel.createParallelGroup(Alignment.LEADING)
                         		.addGroup(gl_panel.createSequentialGroup()
-                        			.addContainerGap()
-                        			.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+                        			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
                         				.addGroup(gl_panel.createSequentialGroup()
+                        					.addGap(32)
+                        					.addComponent(scroll_list, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
+                        					.addPreferredGap(ComponentPlacement.UNRELATED)
+                        					.addComponent(btnNewButton)
+                        					.addGap(10)
+                        					.addComponent(loadImages))
+                        				.addGroup(gl_panel.createSequentialGroup()
+                        					.addGap(46)
                         					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
-                        					.addPreferredGap(ComponentPlacement.RELATED)
+                        					.addGap(18)
                         					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+                        						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+                        							.addComponent(searchField, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
+                        							.addComponent(button1))
                         						.addGroup(gl_panel.createSequentialGroup()
                         							.addComponent(lblNewLabel_2)
                         							.addPreferredGap(ComponentPlacement.RELATED)
-                        							.addComponent(slider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        						.addGroup(gl_panel.createSequentialGroup()
-                        							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                        								.addComponent(searchField, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
-                        								.addComponent(button1))
-                        							.addGap(19)))
+                        							.addComponent(slider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                        					.addGap(19)
                         					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
                         						.addComponent(yearRadio)
                         						.addComponent(titleRadio)
@@ -511,30 +494,22 @@ public class Frame1 {
                         						.addComponent(descriptionRadio)
                         						.addComponent(directorsRadio)
                         						.addComponent(starsRadio)
-                        						.addComponent(chckbxNewCheckBox))
-                        					.addGap(93))
-                        				.addGroup(gl_panel.createSequentialGroup()
-                        					.addComponent(scroll_list, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
-                        					.addPreferredGap(ComponentPlacement.UNRELATED)
-                        					.addComponent(btnNewButton)
-                        					.addGap(10)
-                        					.addComponent(loadImages)
-                        					.addGap(2)))
-                        			.addPreferredGap(ComponentPlacement.RELATED)
+                        						.addComponent(chckbxNewCheckBox))))
+                        			.addGap(2)
                         			.addComponent(scroll_table, GroupLayout.PREFERRED_SIZE, 364, GroupLayout.PREFERRED_SIZE)
-                        			.addGap(44)
+                        			.addGap(18)
                         			.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
                         				.addComponent(nextButton)
                         				.addComponent(previousButton))
-                        			.addContainerGap(249, Short.MAX_VALUE))
+                        			.addContainerGap(275, Short.MAX_VALUE))
                         );
                         panel.setLayout(gl_panel);
-                        table.setAutoCreateRowSorter(true);
-                        table.setAutoCreateColumnsFromModel(false); 
+                      //  table.setAutoCreateRowSorter(true);
+                      //  table.setAutoCreateColumnsFromModel(false); 
                         table.setDefaultEditor(Object.class, null);
                         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        frame.setPreferredSize(new Dimension(1024, 768));
+        frame.setPreferredSize(new Dimension(1280, 768));
         frame.pack();
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
