@@ -391,15 +391,15 @@ public class Frame1 {
 									} catch (IOException e1) {
 										e1.printStackTrace();
 									}
-									ImageIcon image = new ImageIcon("emptyMovie.png");
-									if(loadImages.isSelected()) {
-										try {
+									try {
+										ImageIcon image = new ImageIcon("emptyMovie.png");
+										if(loadImages.isSelected()) {
 											image = new ImageIcon(new URL(d.get("imageUrl")));
-										} catch (MalformedURLException e1) {
-											e1.printStackTrace();
 										}
+										model_table.addRow(new Object[]{image, d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("directors"), d.get("stars"), d.get("description")});
+									} catch (MalformedURLException e1) {
+										e1.printStackTrace();
 									}
-            	    	            model_table.addRow(new Object[]{image, d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("description"), d.get("directors"), d.get("stars")});
             	    	        }
                         	}
                         });
@@ -530,7 +530,7 @@ public class Frame1 {
                         );
                         panel.setLayout(gl_panel);
                         table.setAutoCreateRowSorter(true);
-                        
+                        table.setAutoCreateColumnsFromModel(false); 
                         table.setDefaultEditor(Object.class, null);
                         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
