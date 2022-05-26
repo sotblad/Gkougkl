@@ -5,8 +5,6 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 
-import services.HistoryService;
-
 class Singleton {
     private static Singleton single_instance = null;
  

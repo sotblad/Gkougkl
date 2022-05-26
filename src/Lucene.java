@@ -26,7 +26,6 @@ public class Lucene {
 	}
 
 	public void createDocument() throws IOException, ParseException {
-		
 		CSVController csvcontroller = new CSVController();
 		MovieController moviecontroller = new MovieController();
 		try {

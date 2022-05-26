@@ -1,4 +1,3 @@
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -6,16 +5,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,7 +21,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -39,19 +34,10 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.SortedNumericSortField;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.highlight.Formatter;
-import org.apache.lucene.search.highlight.Fragmenter;
-import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.QueryScorer;
-import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
-import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.search.spell.HighFrequencyDictionary;
 import org.apache.lucene.search.spell.LuceneDictionary;
 import org.apache.lucene.search.spell.SpellChecker;
-import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.search.suggest.analyzing.AnalyzingSuggester;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
@@ -59,11 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import services.HistoryService;
 
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.Font;
@@ -79,9 +61,6 @@ public class Frame1 {
 	static JFrame frame;
     static JPanel panel;
 	public static JTextField input;
-	private StandardAnalyzer analyzer = Singleton.getInstance().analyzer;
-	private Directory index = Singleton.getInstance().index;
-	private static JTable table;
 	private static JScrollPane scroll_table;
 	private static JScrollPane scroll_list;
 	private static boolean customSearch = false;
@@ -163,35 +142,35 @@ public class Frame1 {
                         loadImages.setSelected(true);
                         
                         JCheckBox titleRadio = new JCheckBox("Title");
-                        titleRadio.setBounds(365, 183, 45, 23);
+                        titleRadio.setBounds(445, 183, 76, 23);
                         titleRadio.setVisible(false);
                         
                         JCheckBox genreRadio = new JCheckBox("Genre");
-                        genreRadio.setBounds(457, 183, 55, 23);
+                        genreRadio.setBounds(523, 183, 85, 23);
                         genreRadio.setVisible(false);
                         
                         JCheckBox yearRadio = new JCheckBox("Year");
-                        yearRadio.setBounds(410, 183, 47, 23);
+                        yearRadio.setBounds(445, 212, 64, 23);
                         yearRadio.setVisible(false);
                         
                         JCheckBox ratingRadio = new JCheckBox("Rating");
-                        ratingRadio.setBounds(512, 183, 57, 23);
+                        ratingRadio.setBounds(523, 212, 85, 23);
                         ratingRadio.setVisible(false);
                         
                         JCheckBox durationRadio = new JCheckBox("Duration");
-                        durationRadio.setBounds(569, 183, 67, 23);
+                        durationRadio.setBounds(610, 183, 104, 23);
                         durationRadio.setVisible(false);
                         
                         JCheckBox descriptionRadio = new JCheckBox("Description");
-                        descriptionRadio.setBounds(636, 183, 79, 23);
+                        descriptionRadio.setBounds(610, 212, 104, 23);
                         descriptionRadio.setVisible(false);
                         
                         JCheckBox directorsRadio = new JCheckBox("Directors");
-                        directorsRadio.setBounds(715, 183, 69, 23);
+                        directorsRadio.setBounds(716, 183, 85, 23);
                         directorsRadio.setVisible(false);
                         
                         JCheckBox starsRadio = new JCheckBox("Stars");
-                        starsRadio.setBounds(784, 183, 51, 23);
+                        starsRadio.setBounds(716, 212, 69, 23);
                         starsRadio.setVisible(false);
                         btngroup.add(titleRadio);
                         btngroup.add(genreRadio);
@@ -206,15 +185,6 @@ public class Frame1 {
                         final DefaultListModel historyList = new DefaultListModel();
                         final JList list = new JList(historyList);
                         
-                        list.addListSelectionListener(new ListSelectionListener() {
-                            public void valueChanged(ListSelectionEvent event) {
-                                if (!event.getValueIsAdjusting()){
-                                    JList source = (JList)event.getSource();
-                                //    String selected = source.getSelectedValue().toString();
-                                  //  System.out.println(selected);
-                                }
-                            }
-                        });
                         String [] items = {"None", "Year", "Rating", "Duration"};
                         final JComboBox comboBox = new JComboBox(items);
                         comboBox.setBounds(978, 66, 85, 26);
@@ -251,9 +221,7 @@ public class Frame1 {
                         	 });
                         
                         button1.addActionListener(new ActionListener() {
-                            
                             public void actionPerformed(ActionEvent arg0) {
-                            	
                             	nextRowsCount = 0;
                             	rowsCount = 0;
                             	nextButton.setEnabled(false);
@@ -268,9 +236,7 @@ public class Frame1 {
 	                                for(String item : historyService.getHistory()) {
 	                                	historyList.addElement(item);
 	                                }
-	                            	//searchField.addItem(historyService.getHistory().get(historyService.getHistory().size()-1));
                             	}
-                            	
 
                             	model_table.setRowCount(0);
                             	try {
@@ -289,7 +255,6 @@ public class Frame1 {
                 	    	        }
                 	    	
                 	    	        // 3. search
-                	    	        
                 	    	        IndexReader reader = DirectoryReader.open(index);
                 	    	        searcher = new IndexSearcher(reader);
                 	    	        TopDocs docs = null;
@@ -329,13 +294,6 @@ public class Frame1 {
                 	    	        	nextRowsCount = 10;
                 	    	        	nextButton.setEnabled(true);
                 	    	        }
-                	    	        Formatter formatter = new SimpleHTMLFormatter();
-                	    	        QueryScorer queryScorer = new QueryScorer(q);
-                	    	        
-                	    	        Fragmenter fragmenter = new SimpleSpanFragmenter(queryScorer);
-                	    	        Highlighter highlighter = new Highlighter(queryScorer);
-                	    	        highlighter.setTextFragmenter(fragmenter);
-                	    	        
                 	    	        
                 	    	        	for(int i=0;i<nextRowsCount;++i) {
                     	    	            int docId = hits[i].doc;
@@ -344,8 +302,6 @@ public class Frame1 {
     										if(loadImages.isSelected()) {
     											image = new ImageIcon(new URL(d.get("imageUrl")));
     										}
-    							//			TokenStream tokenStream = analyzer.tokenStream("text", new StringReader(d.get("fulltext")));
-    							//			System.out.println(highlighter.getBestFragment(tokenStream, d.get("fulltext")));
     										model_table.addRow(new Object[]{image, d.get("title"), d.get("year"), d.get("genre"), d.get("rating"), d.get("duration"), d.get("directors"), d.get("stars"), d.get("description")});
                     	    	        }
                 	    	        
@@ -426,18 +382,13 @@ public class Frame1 {
 									}
             	    	        }
                         	}
-                        });
-                    //    nextButton.setEnabled(false);
-                        
-                        
-                        
-                        
+                        });    
                         
                         JLabel lblNewLabel_2 = new JLabel("Search Sensitivity");
                         lblNewLabel_2.setBounds(961, 113, 113, 14);
                         
                         JButton btnNewButton = new JButton("Clear History");
-                        btnNewButton.setBounds(232, 184, 123, 23);
+                        btnNewButton.setBounds(203, 183, 123, 23);
                         scroll_list = new JScrollPane(list);
                         scroll_list.setBounds(203, 32, 152, 141);
                         btnNewButton.addActionListener(new ActionListener() {
@@ -474,8 +425,6 @@ public class Frame1 {
                         
                         chckbxNewCheckBox_1.setBounds(1069, 68, 97, 23);
                         panel.add(chckbxNewCheckBox_1);
-                      //  table.setAutoCreateRowSorter(true);
-                      //  table.setAutoCreateColumnsFromModel(false); 
                         table.setDefaultEditor(Object.class, null);
                         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
