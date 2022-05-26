@@ -37,6 +37,9 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.SortedNumericSortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.Formatter;
 import org.apache.lucene.search.highlight.Fragmenter;
@@ -107,10 +110,12 @@ public class Frame1 {
         
         
         final JFrame frame = new JFrame();
+        frame.getContentPane().setLayout(null);
         
         JPanel panel = new JPanel();
+        panel.setBounds(0, 0, 1264, 922);
 
-        frame.getContentPane().add(panel, BorderLayout.NORTH);
+        frame.getContentPane().add(panel);
         
         final DefaultTableModel model_table = new DefaultTableModel(){
             public Class getColumnClass(int column) {
@@ -139,41 +144,54 @@ public class Frame1 {
         table.getColumnModel().getColumn(7).setCellRenderer(new WordWrapCellRenderer());
         table.getColumnModel().getColumn(8).setCellRenderer(new WordWrapCellRenderer());
                         JButton button1 = new JButton("Search");
+                        button1.setBounds(861, 135, 85, 23);
                         button1.setActionCommand("Search");
                         
                         JLabel lblNewLabel = new JLabel("gkougkl");
+                        lblNewLabel.setBounds(539, 46, 95, 54);
                         lblNewLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 25));
                         
                         
                         scroll_table = new JScrollPane(table);
+                        scroll_table.setBounds(10, 242, 1244, 364);
                         final JSlider slider = new JSlider();
+                        slider.setBounds(961, 138, 128, 26);
                         final List<JCheckBox> btngroup = new ArrayList<>();
                         
                         final JCheckBox loadImages = new JCheckBox("Load images");
+                        loadImages.setBounds(6, 217, 123, 23);
                         loadImages.setSelected(true);
                         
                         JCheckBox titleRadio = new JCheckBox("Title");
+                        titleRadio.setBounds(365, 183, 45, 23);
                         titleRadio.setVisible(false);
                         
                         JCheckBox genreRadio = new JCheckBox("Genre");
+                        genreRadio.setBounds(457, 183, 55, 23);
                         genreRadio.setVisible(false);
                         
                         JCheckBox yearRadio = new JCheckBox("Year");
+                        yearRadio.setBounds(410, 183, 47, 23);
                         yearRadio.setVisible(false);
                         
                         JCheckBox ratingRadio = new JCheckBox("Rating");
+                        ratingRadio.setBounds(512, 183, 57, 23);
                         ratingRadio.setVisible(false);
                         
                         JCheckBox durationRadio = new JCheckBox("Duration");
+                        durationRadio.setBounds(569, 183, 67, 23);
                         durationRadio.setVisible(false);
                         
                         JCheckBox descriptionRadio = new JCheckBox("Description");
+                        descriptionRadio.setBounds(636, 183, 79, 23);
                         descriptionRadio.setVisible(false);
                         
                         JCheckBox directorsRadio = new JCheckBox("Directors");
+                        directorsRadio.setBounds(715, 183, 69, 23);
                         directorsRadio.setVisible(false);
                         
                         JCheckBox starsRadio = new JCheckBox("Stars");
+                        starsRadio.setBounds(784, 183, 51, 23);
                         starsRadio.setVisible(false);
                         btngroup.add(titleRadio);
                         btngroup.add(genreRadio);
@@ -184,7 +202,7 @@ public class Frame1 {
                         btngroup.add(directorsRadio);
                         btngroup.add(starsRadio);
                        
-                        
+                        final JCheckBox chckbxNewCheckBox_1 = new JCheckBox("Descending");
                         final DefaultListModel historyList = new DefaultListModel();
                         final JList list = new JList(historyList);
                         
@@ -197,16 +215,24 @@ public class Frame1 {
                                 }
                             }
                         });
+                        String [] items = {"None", "Year", "Rating", "Duration"};
+                        final JComboBox comboBox = new JComboBox(items);
+                        comboBox.setBounds(978, 66, 85, 26);
+                        panel.add(comboBox);
                         
                         final JButton nextButton = new JButton("Next");
+                        nextButton.setBounds(1159, 624, 95, 23);
                         final JButton previousButton = new JButton("Previous");
+                        previousButton.setBounds(1042, 624, 95, 23);
                         nextButton.setEnabled(false);
                         previousButton.setEnabled(false);
                         final JComboBox searchField = new JComboBox();
+                        searchField.setBounds(365, 128, 478, 36);
                         
                         searchField.setEditable(true);
                         
                         final JCheckBox chckbxNewCheckBox = new JCheckBox("Custom Field Search");
+                        chckbxNewCheckBox.setBounds(861, 183, 175, 23);
                         chckbxNewCheckBox.addItemListener(new ItemListener() {
                         	  @Override
                         	  public void itemStateChanged(ItemEvent e) {
@@ -266,7 +292,16 @@ public class Frame1 {
                 	    	        
                 	    	        IndexReader reader = DirectoryReader.open(index);
                 	    	        searcher = new IndexSearcher(reader);
-                	    	        TopDocs docs = searcher.search(q, reader.numDocs());
+                	    	        TopDocs docs = null;
+                	    	        if(comboBox.getSelectedItem() != "None") { 
+                	    	        	Sort sort = new Sort();
+                	    	        	
+                	    	        	sort.setSort(new SortField(comboBox.getSelectedItem().toString().toLowerCase() +"Sort", SortField.Type.STRING, chckbxNewCheckBox_1.isSelected()));  
+                	    	        	docs = searcher.search(q, reader.numDocs(), sort);
+                	    	        }else {
+                	    	        	docs = searcher.search(q, reader.numDocs());
+                	    	        }
+                	    	        
                 	    	        hits = docs.scoreDocs;
                 	    	        nextButton.setEnabled(false);
                                 	previousButton.setEnabled(false);
@@ -399,126 +434,46 @@ public class Frame1 {
                         
                         
                         JLabel lblNewLabel_2 = new JLabel("Search Sensitivity");
+                        lblNewLabel_2.setBounds(961, 113, 113, 14);
                         
                         JButton btnNewButton = new JButton("Clear History");
+                        btnNewButton.setBounds(232, 184, 123, 23);
                         scroll_list = new JScrollPane(list);
+                        scroll_list.setBounds(203, 32, 152, 141);
                         btnNewButton.addActionListener(new ActionListener() {
                         	public void actionPerformed(ActionEvent e) {
                         		historyService.clearHistory();
                         		historyList.clear();
                         	}
                         });
+                        panel.setLayout(null);
+                        panel.add(btnNewButton);
+                        panel.add(scroll_list);
+                        panel.add(titleRadio);
+                        panel.add(yearRadio);
+                        panel.add(genreRadio);
+                        panel.add(ratingRadio);
+                        panel.add(durationRadio);
+                        panel.add(descriptionRadio);
+                        panel.add(directorsRadio);
+                        panel.add(starsRadio);
+                        panel.add(searchField);
+                        panel.add(chckbxNewCheckBox);
+                        panel.add(button1);
+                        panel.add(slider);
+                        panel.add(lblNewLabel_2);
+                        panel.add(lblNewLabel);
+                        panel.add(scroll_table);
+                        panel.add(previousButton);
+                        panel.add(nextButton);
+                        panel.add(loadImages);
                         
+                        JLabel lblNewLabel_1 = new JLabel("Sort by");
+                        lblNewLabel_1.setBounds(978, 46, 46, 14);
+                        panel.add(lblNewLabel_1);
                         
-                        
-                        
-                        
-                        GroupLayout gl_panel = new GroupLayout(panel);
-                        gl_panel.setHorizontalGroup(
-                        	gl_panel.createParallelGroup(Alignment.TRAILING)
-                        		.addGroup(gl_panel.createSequentialGroup()
-                        			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
-                        				.addGroup(gl_panel.createSequentialGroup()
-                        					.addGap(25)
-                        					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                        						.addComponent(btnNewButton)
-                        						.addComponent(scroll_list, GroupLayout.PREFERRED_SIZE, 152, GroupLayout.PREFERRED_SIZE))
-                        					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                        						.addGroup(gl_panel.createSequentialGroup()
-                        							.addPreferredGap(ComponentPlacement.UNRELATED)
-                        							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                        								.addGroup(gl_panel.createSequentialGroup()
-                        									.addComponent(titleRadio)
-                        									.addGap(0)
-                        									.addComponent(yearRadio)
-                        									.addPreferredGap(ComponentPlacement.RELATED)
-                        									.addComponent(genreRadio)
-                        									.addPreferredGap(ComponentPlacement.RELATED)
-                        									.addComponent(ratingRadio)
-                        									.addPreferredGap(ComponentPlacement.RELATED)
-                        									.addComponent(durationRadio)
-                        									.addPreferredGap(ComponentPlacement.RELATED)
-                        									.addComponent(descriptionRadio)
-                        									.addPreferredGap(ComponentPlacement.RELATED)
-                        									.addComponent(directorsRadio)
-                        									.addPreferredGap(ComponentPlacement.RELATED)
-                        									.addComponent(starsRadio)
-                        									.addGap(26))
-                        								.addGroup(gl_panel.createSequentialGroup()
-                        									.addComponent(searchField, GroupLayout.PREFERRED_SIZE, 478, GroupLayout.PREFERRED_SIZE)
-                        									.addGap(18)))
-                        							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                        								.addComponent(chckbxNewCheckBox)
-                        								.addGroup(gl_panel.createSequentialGroup()
-                        									.addComponent(button1)
-                        									.addGap(10)
-                        									.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                        										.addComponent(slider, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE)
-                        										.addGroup(gl_panel.createSequentialGroup()
-                        											.addGap(29)
-                        											.addComponent(lblNewLabel_2))))))
-                        						.addGroup(gl_panel.createSequentialGroup()
-                        							.addGap(184)
-                        							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)))
-                        					.addGap(175))
-                        				.addGroup(gl_panel.createSequentialGroup()
-                        					.addContainerGap()
-                        					.addComponent(loadImages)))
-                        			.addGap(25))
-                        		.addGroup(gl_panel.createSequentialGroup()
-                        			.addContainerGap()
-                        			.addComponent(scroll_table, GroupLayout.DEFAULT_SIZE, 1244, Short.MAX_VALUE)
-                        			.addContainerGap())
-                        		.addGroup(gl_panel.createSequentialGroup()
-                        			.addContainerGap(1120, Short.MAX_VALUE)
-                        			.addComponent(previousButton)
-                        			.addPreferredGap(ComponentPlacement.RELATED)
-                        			.addComponent(nextButton)
-                        			.addContainerGap())
-                        );
-                        gl_panel.setVerticalGroup(
-                        	gl_panel.createParallelGroup(Alignment.LEADING)
-                        		.addGroup(gl_panel.createSequentialGroup()
-                        			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-                        				.addGroup(gl_panel.createSequentialGroup()
-                        					.addGap(32)
-                        					.addComponent(scroll_list, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
-                        					.addPreferredGap(ComponentPlacement.UNRELATED)
-                        					.addComponent(btnNewButton)
-                        					.addGap(10)
-                        					.addComponent(loadImages))
-                        				.addGroup(gl_panel.createSequentialGroup()
-                        					.addGap(46)
-                        					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
-                        					.addGap(18)
-                        					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                        						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-                        							.addComponent(searchField, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
-                        							.addComponent(button1))
-                        						.addGroup(gl_panel.createSequentialGroup()
-                        							.addComponent(lblNewLabel_2)
-                        							.addPreferredGap(ComponentPlacement.RELATED)
-                        							.addComponent(slider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                        					.addGap(19)
-                        					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-                        						.addComponent(yearRadio)
-                        						.addComponent(titleRadio)
-                        						.addComponent(genreRadio)
-                        						.addComponent(ratingRadio)
-                        						.addComponent(durationRadio)
-                        						.addComponent(descriptionRadio)
-                        						.addComponent(directorsRadio)
-                        						.addComponent(starsRadio)
-                        						.addComponent(chckbxNewCheckBox))))
-                        			.addGap(2)
-                        			.addComponent(scroll_table, GroupLayout.PREFERRED_SIZE, 364, GroupLayout.PREFERRED_SIZE)
-                        			.addGap(18)
-                        			.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-                        				.addComponent(nextButton)
-                        				.addComponent(previousButton))
-                        			.addContainerGap(275, Short.MAX_VALUE))
-                        );
-                        panel.setLayout(gl_panel);
+                        chckbxNewCheckBox_1.setBounds(1069, 68, 97, 23);
+                        panel.add(chckbxNewCheckBox_1);
                       //  table.setAutoCreateRowSorter(true);
                       //  table.setAutoCreateColumnsFromModel(false); 
                         table.setDefaultEditor(Object.class, null);
