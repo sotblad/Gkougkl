@@ -54,6 +54,7 @@ public class Lucene {
 		  doc.add(new TextField("directors", movie.getDirectors(), Field.Store.YES));
 		  doc.add(new TextField("stars", movie.getStars(), Field.Store.YES));
 		  doc.add(new TextField("fulltext", movie.getFulltext(), Field.Store.YES));
+		  doc.add(new StringField("titleString", movie.getTitle(), Field.Store.YES));
 		  w.addDocument(doc);
 		}
 }
