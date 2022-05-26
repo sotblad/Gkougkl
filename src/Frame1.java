@@ -30,6 +30,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -45,6 +46,8 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
 import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.search.spell.HighFrequencyDictionary;
+import org.apache.lucene.search.spell.LuceneDictionary;
+import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.search.suggest.analyzing.AnalyzingSuggester;
 import org.apache.lucene.store.ByteBuffersDirectory;
@@ -102,18 +105,7 @@ public class Frame1 {
         
         buildAnalyzingSuggester(index, analyzer);
         
-//        SpellChecker phraseRecommender = new SpellChecker(index);
-//        phraseRecommender.setAccuracy(0.3f);
-//        IndexReader reader = DirectoryReader.open(index);
-//        IndexWriterConfig config = new IndexWriterConfig(analyzer);
-//        phraseRecommender.indexDictionary(new LuceneDictionary(reader, "fulltext"), config, true);
-//        
-//        
-//        String[] suggestions = phraseRecommender.suggestSimilar("the man of", 5);
-//        for(String sug : suggestions) {
-//        	System.out.println(sug);
-//        }
-//        phraseRecommender.close();
+        
         final JFrame frame = new JFrame();
         
         JPanel panel = new JPanel();
@@ -243,18 +235,9 @@ public class Frame1 {
                             	String querystr = searchField.getSelectedItem().toString();
                             	
                             	WordWrapCellRenderer.setVariable(querystr);
-                            	List<Lookup.LookupResult> lookup = null;
                             	if(!historyService.getHistory().contains(querystr)) {
 	                            	historyService.addToHistory(querystr);
-	                            	try {
-										lookup = analyzingSuggester.lookup(CharBuffer.wrap(querystr), false, 5);
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
 
-	                                for(Lookup.LookupResult suggestion : lookup) {
-	                                	searchField.addItem(suggestion.key);
-	                                }
 	                                historyList.clear();
 	                                for(String item : historyService.getHistory()) {
 	                                	historyList.addElement(item);
@@ -287,6 +270,20 @@ public class Frame1 {
                 	    	        hits = docs.scoreDocs;
                 	    	        nextButton.setEnabled(false);
                                 	previousButton.setEnabled(false);
+                                	
+                                	SpellChecker phraseRecommender = new SpellChecker(index);
+                                    phraseRecommender.setAccuracy(0.3f);
+                                    IndexWriterConfig config = new IndexWriterConfig(analyzer);
+                                    phraseRecommender.indexDictionary(new LuceneDictionary(reader, "titleString"), config, true);
+                                    
+                                    
+                                    String[] suggestions = phraseRecommender.suggestSimilar(historyService.getHistoryAsString(), 5);
+                                    searchField.removeAllItems();
+                                    for(String sug : suggestions) {
+                                    	searchField.addItem(sug);
+                                    }
+                                    searchField.setSelectedItem(null);
+                                    phraseRecommender.close();
                                 	
                 	    	        // 4. display results
                 	    	        if(hits.length <= 10) {

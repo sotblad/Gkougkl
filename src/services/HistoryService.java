@@ -17,6 +17,14 @@ public class HistoryService {
 		return history;
 	}
 	
+	public String getHistoryAsString(){
+		String res = "";
+		for(String i : history) {
+			res += i + " ";
+		}
+		return res;
+	}
+	
 	public void clearHistory() {
 		history = new ArrayList<String>();
 	}
